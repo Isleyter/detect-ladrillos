@@ -1,5 +1,5 @@
-from flask import Flask
-from pymongo import MongoClient
+from flask import Flask # type: ignore
+from pymongo import MongoClient # type: ignore
 import torch
 import os
 import torch
@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # --- Variables de entorno ---
 MONGO_URI = os.environ.get("MONGO_URI")
-DRIVE_MODEL_ID = os.environ.get("DRIVE_MODEL_ID")
+DRIVE_MODEL_ID = os.environ.get("174Td9kRd10iImunxIwrXZsKn9PduBDTX")
 
 # --- Conexión MongoDB ---
 client = MongoClient(MONGO_URI)
