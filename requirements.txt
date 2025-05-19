@@ -4,27 +4,28 @@ Flask-Bcrypt==1.0.1
 Flask-PyMongo==2.3.0
 Werkzeug==2.3.8
 
-# Base de datos y utilidades
+# Base de datos
 pymongo==4.6.1
 
+# Utilidades
 python-dotenv
 gunicorn
-# OpenCV para video y procesamiento de imágenes
-opencv-python==4.9.0.80
+requests
+
+# OpenCV (versión headless para servidores sin GUI como Render)
+opencv-python-headless==4.9.0.80
 
 # NumPy y SciPy
 numpy==1.26.4
 scipy==1.13.0
 
-# Matplotlib para gráficas
+# Matplotlib
 matplotlib==3.8.4
 kiwisolver==1.4.5
 
-# PDF generation (si usas reportlab o similar)
+# PDF y utilitarios
 reportlab==4.1.0
-
-# Otros utilitarios
 pillow==10.3.0
-bson==0.5.10
-torch
-requests
+
+# PyTorch (de preferencia especificar versión)
+torch==2.2.2  # o la versión que usaste localmente
