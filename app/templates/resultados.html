@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2 class="text-center mt-4">Historial de Monitoreos</h2>
+
+    <div class="container mt-4">
+        <form method="get" action="{{ url_for('routes.resultados') }}" class="form-inline">
+            <div class="form-group">
+                <label for="fecha_inicio">Fecha de Inicio:</label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" value="{{ fecha_inicio }}">
+            </div>
+            <div class="form-group">
+                <label for="fecha_fin">Fecha de Fin:</label>
+                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="{{ fecha_fin }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
+
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Total Ladrillos</th>
+                    <th>Ladrillos Buenos</th>
+                    <th>Ladrillos Malos</th>
+                    <th>Precisión</th>
+                    <th>Tiempo Promedio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for monitoreo in monitoreos %}
+                    <tr>
+                        <td>{{ monitoreo['fecha'] }}</td>
+                        <td>{{ monitoreo['total_ladrillos'] }}</td>
+                        <td>{{ monitoreo['ladrillos_buenos'] }}</td>
+                        <td>{{ monitoreo['ladrillos_malos'] }}</td>
+                        <td>{{ monitoreo['precision'] }}%</td>
+                        <td>{{ monitoreo['tiempo_promedio_fisura'] }} seg</td>
+                        <td>
+                            <a href="{{ url_for('routes.descargar_reporte', monitoreo_id=monitoreo['_id']) }}" class="btn btn-info">
+
+                                Descargar Reporte
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No hay resultados para mostrar</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-secondary" {% if page == 1 %}disabled{% endif %}>
+                <a href="{{ url_for('routes.resultados', page=page-1, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin) }}">Anterior</a>
+            </button>
+            <button class="btn btn-secondary" {% if page == total_paginas %}disabled{% endif %}>
+                <a href="{{ url_for('routes.resultados', page=page+1, fecha_inicio=fecha_inicio, fecha_fin=fecha_fin) }}">Siguiente</a>
+            </button>
+        </div>
+    </div>
+{% endblock %}

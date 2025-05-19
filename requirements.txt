@@ -1,0 +1,30 @@
+Flask==2.3.3
+Flask-Login==0.6.3
+Flask-Bcrypt==1.0.1
+Flask-PyMongo==2.3.0
+Werkzeug==2.3.8
+
+# Base de datos y utilidades
+pymongo==4.6.1
+
+python-dotenv
+gunicorn
+# OpenCV para video y procesamiento de imágenes
+opencv-python==4.9.0.80
+
+# NumPy y SciPy
+numpy==1.26.4
+scipy==1.13.0
+
+# Matplotlib para gráficas
+matplotlib==3.8.4
+kiwisolver==1.4.5
+
+# PDF generation (si usas reportlab o similar)
+reportlab==4.1.0
+
+# Otros utilitarios
+pillow==10.3.0
+bson==0.5.10
+torch
+requests

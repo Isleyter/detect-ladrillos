@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Mensajes Flash -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-info mt-3">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<nav class="navbar sticky-top navbar-he  bg-body-tertiary">
+  <div style="display: block;" class="container-fluid text-center">
+   <h2>Monitoreo en Vivo</h2>
+  </div>
+</nav>
+
+<!--vista de datos del monitoreo-->
+<div class="row" style="margin-top: 20px;">
+  <div class="col-sm-3 mb-3 mb-sm-0 ">
+    <div class="card " style="text-align: center; margin-bottom: 5px; border: 2px solid #D13333;">
+      <div class="card-header" style="border-bottom-width: 4px;">
+        <h5 class="card-title">Total de Ladrillos</h5>
+      </div>
+      <div class="card-body" style="text-align: center;">
+       <div class="row" style="text-align: center;">
+        <div class="col-sm-6 mb-3 mb-sm-0" >
+          <i class="bi bi-bricks" style="font-size: 2rem; color: gold;" ></i>
+          <p></p>
+        </div>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+          <h1><span id="total" class="text-primary">0</span></h1>
+        </div>
+       </div>
+      </div>
+    </div>
+
+    <div class="card " style="text-align: center; margin-bottom: 5px;  border: 2px solid #D13333;">
+      <div class="card-header" style="border-bottom-width: 4px;">
+        <h5 class="card-title">Ladrillos Buenos</h5>
+      </div>
+      <div class="card-body" style="text-align: center;">
+       <div class="row" style="text-align: center;">
+        <div class="col-sm-6 mb-3 mb-sm-0" >
+          <i class="bi bi-hand-thumbs-up" style="font-size: 2rem; color: greenyellow;" ></i>
+          <p></p>
+        </div>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+          <h1><span id="buenos" class="text-success">0</span></h1>
+        </div>
+       </div>
+      </div>
+    </div>
+
+    <div class="card " style="text-align: center; margin-bottom: 5px; border: 2px solid #D13333;">
+      <div class="card-header" style="border-bottom-width: 4px;">
+        <h5 class="card-title">Ladrillos Fracturados</h5>
+      </div>
+      <div class="card-body" style="text-align: center;">
+       <div class="row" style="text-align: center;">
+        <div class="col-sm-6 mb-3 mb-sm-0" >
+          <i class="bi bi-hand-thumbs-down-fill m-2" style="font-size: 2rem; color: red;" ></i>
+          <p></p>
+        </div>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+          <h1> <span id="malos" class="text-danger">0</span></h1>
+        </div>
+       </div>
+      </div>
+    </div>
+    
+    <div class="card " style="text-align: center; margin-bottom: 5px;  border: 2px solid #D13333;">
+      <div class="card-header" style="border-bottom-width: 4px;">
+        <h5 class="card-title">Precisión de Ladrillos fracturados</h5>
+      </div>
+      <div class="card-body" style="text-align: center;">
+       <div class="row" style="text-align: center;">
+        <div class="col-sm-6 mb-3 mb-sm-0" >
+          <i class="bi bi-percent" style="font-size: 2rem; color: red;" ></i>
+          <p></p>
+        </div>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+          <h1><span id="precision"><p>0%</p></span></h1>
+        </div>
+       </div>
+      </div>
+    </div>
+
+    <div class="card " style="text-align: center; margin-bottom: 5px;  border: 2px solid #D13333;">
+      <div class="card-header" style="border-bottom-width: 4px;">
+        <h5 class="card-title">Tiempo Promedio</h5>
+      </div>
+      <div class="card-body" style="text-align: center;">
+       <div class="row" style="text-align: center;">
+        <div class="col-sm-6 mb-3 mb-sm-0" >
+          <i class="bi bi-alarm" style="font-size: 2rem; color: red;" ></i>
+          <p></p>
+        </div>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+          <h4> {% if datos and datos.tiempo_promedio_fisura is not none %}
+                  <p><strong>{{ datos.tiempo_promedio_fisura }} segundos</strong></p>
+                {% else %}
+                  <p><strong>--</strong></p>
+                {% endif %}
+                </h4>
+        </div>
+       </div>
+      </div>
+    </div>
+  </div>
+
+<!--monitoreo-->
+<div class="col-sm-9">
+
+  <div class="container text-center mt-4">
+    <form action="{{ url_for('routes.iniciar_monitoreo') }}" method="POST" class="d-flex justify-content-center align-items-center gap-3">
+      <h4>Seleccionar:</h4>
+      <select name="selected_camera" id="camera_select" class="form-select w-auto"  {% if monitoring_active %}disabled{% endif %}>
+        {% for index, name in camaras %}
+          <option value="{{ index }}">{{ name }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-play-btn"></i> Iniciar Monitoreo
+      </button>
+    </form>
+
+    {% if monitoring_active %}
+   
+    <div class="mt-4" style="max-height: 630px; overflow: hidden;">
+      <img  id="video_stream" src="{{ url_for('routes.video_feed') }}"
+          class="img-fluid w-100 d-none"
+          onload="this.classList.remove('d-none');" alt="Vista de monitoreo en vivo"
+          style="border-radius: 4px; border: 2px solid #D13333; object-fit: cover; height: 100%; width: 100%;" />
+
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center m-3">
+      <strong>El monitoreo no está activo.</strong> Presiona "Iniciar Monitoreo" para comenzar.
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Botón: Finalizar monitoreo -->
+  {% if monitoring_active %}
+  <form action="{{ url_for('routes.finalizar_monitoreo') }}" method="POST" class="text-center mt-3">
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-x-square"></i> Finalizar Monitoreo
+    </button>
+  </form>
+  {% endif %}
+
+</div>
+
+</div>
+
+<!-- JavaScript -->
+<script>
+// Actualizar conteo cada 2 segundos
+function actualizarConteo() {
+  fetch('/conteo')
+    .then(response => response.json())
+    .then(data => { if (document.getElementById('total')) {
+        document.getElementById('total').textContent = data.total;
+        document.getElementById('buenos').textContent = data.buenos;
+        document.getElementById('malos').textContent = data.malos;
+        document.getElementById('precision').textContent = data.precision + '%';
+      }
+    });
+}
+
+setInterval(actualizarConteo, 2000);
+</script>
+
+{% if monitoring_finished %}
+<script>
+  // Reiniciar contadores en la interfaz
+  document.getElementById('total').textContent = '0';
+  document.getElementById('buenos').textContent = '0';
+  document.getElementById('malos').textContent = '0';
+  document.getElementById('precision').textContent = '0%';
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/listar_camaras')
+    .then(response => response.json())
+    .then(data => {
+        const select = document.getElementById('camera_select');
+        if (!select) return;
+
+        select.innerHTML = '';
+        data.forEach(([index, label]) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = label;
+            select.appendChild(option);
+        });
+    })
+    .catch(err => {
+        console.error("Error al obtener cámaras:", err);
+    });
+});
+</script>
+
+{% endif %}
+
+{% endblock %}
