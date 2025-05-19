@@ -1,11 +1,18 @@
+import os
 import requests
 
 def download_model(file_id, destination):
+    print("Descargando modelo desde Google Drive...")
+
+    # Crea la carpeta de destino si no existe
+    os.makedirs(os.path.dirname(destination), exist_ok=True)
+
     URL = "https://drive.google.com/uc?export=download"
     session = requests.Session()
-    response = session.get(URL, params={"id": file_id}, stream=True)
 
+    response = session.get(URL, params={"id": file_id}, stream=True)
     token = None
+
     for k, v in response.cookies.items():
         if k.startswith("download_warning"):
             token = v
@@ -18,3 +25,5 @@ def download_model(file_id, destination):
         for chunk in response.iter_content(32768):
             if chunk:
                 f.write(chunk)
+
+    print("Descarga completada.")
