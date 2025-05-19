@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # --- Variables de entorno ---
 MONGO_URI = os.environ.get("MONGO_URI")
-DRIVE_MODEL_ID = os.environ.get("174Td9kRd10iImunxIwrXZsKn9PduBDTX")
+DRIVE_MODEL_ID = os.environ.get("DRIVE_MODEL_ID")
 
 # --- Conexión MongoDB ---
 client = MongoClient(MONGO_URI)
