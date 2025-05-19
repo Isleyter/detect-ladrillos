@@ -24,7 +24,7 @@ if not os.path.exists(model_path):
     download_model(DRIVE_MODEL_ID, model_path)
 
 # --- Cargar modelo YOLOv5 ---
-model = torch.load(model_path, map_location=torch.device("cpu"))
+model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True, source='github')
 model.eval()
 
 # --- Ruta de prueba ---
