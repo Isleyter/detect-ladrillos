@@ -26,7 +26,7 @@ class VideoCamera:
         self.start_time = datetime.now()
         self.end_time = None
 
-        sys.modules['pathlib'].PosixPath = Path
+        # ----- sys.modules['pathlib'].PosixPath = Path -------
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='./models/best50e1.pt')
         self.model.conf = 0.5
         self.model.iou = 0.45
