@@ -2,6 +2,8 @@ from flask import Flask
 from pymongo import MongoClient
 import torch
 import os
+import torch
+from pathlib import Path
 
 from utils.download_model import download_model
 
@@ -22,7 +24,8 @@ if not os.path.exists(model_path):
     download_model(DRIVE_MODEL_ID, model_path)
 
 # --- Cargar modelo YOLOv5 ---
-model = torch.hub.load("ultralytics/yolov5", "custom", path=model_path)
+model = torch.load(model_path, map_location=torch.device("cpu"))
+model.eval()
 
 # --- Ruta de prueba ---
 @app.route("/")
