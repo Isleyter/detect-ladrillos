@@ -17,7 +17,7 @@ app = Flask(__name__, template_folder="app/templates", static_folder="app/static
 
 # --- Configuración LoginManager ---
 from app.extensions import login_manager
-from app.models import Usuario
+from app.models import User as Usuario
 
 login_manager.init_app(app)
 login_manager.login_view = 'routes.index'
