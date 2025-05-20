@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import sys
 
-from utils.download_model import download_model # type: ignore
+from utils.download_model import download_model  # type: ignore
 
 app = Flask(__name__)
 
@@ -25,20 +25,21 @@ db = client["mi_basedatos"]
 
 # --- Descargar modelo si no existe ---
 model_path = "models/best50e1.pt"
+os.makedirs("models", exist_ok=True)
 if not os.path.exists(model_path):
-    print("Descargando modelo desde Google Drive...")
+    print("📥 Descargando modelo desde Google Drive...")
     download_model(DRIVE_MODEL_ID, model_path)
 
-# --- Cargar modelo YOLOv5 desde carpeta local ---
-sys.path.append('./yolov5')  # Asegúrate de que esta ruta sea correcta
+# --- Cargar modelo YOLOv5 localmente ---
+sys.path.append('./yolov5')  # Asegúrate de que esta ruta sea válida en Render
 
 from models.common import DetectMultiBackend
 
-device = 'cpu'  # Cambia a 'cuda' si Render tiene soporte GPU y lo deseas
-model = DetectMultiBackend(model_path, device=device)
+device = 'cpu'  # Cambiar a 'cuda' si tienes GPU en Render
+model = DetectMultiBackend(model_path, device=device, dnn=False)
 model.eval()
 
-# --- Ruta de prueba ---
+# --- Ruta simple de prueba ---
 @app.route("/")
 def home():
     return "✅ App Flask corriendo con MongoDB y modelo YOLOv5 cargado localmente."
