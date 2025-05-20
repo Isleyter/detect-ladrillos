@@ -5,9 +5,9 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'yolov5'))
 
+from flask import Flask  # type: ignore
 from utils.download_model import download_model  # type: ignore
 from yolov5.models.common import DetectMultiBackend  # type: ignore
-from flask import Flask  # type: ignore
 import torch
 from pathlib import Path
 
@@ -18,31 +18,25 @@ app = Flask(__name__, template_folder="app/templates", static_folder="app/static
 MONGO_URI = os.environ.get("MONGO_URI")
 DRIVE_MODEL_ID = os.environ.get("DRIVE_MODEL_ID")
 
-# --- Validar que MONGO_URI y DRIVE_MODEL_ID existan ---
 if not MONGO_URI:
     raise EnvironmentError("❌ La variable de entorno MONGO_URI no está definida.")
 if not DRIVE_MODEL_ID:
     raise EnvironmentError("❌ La variable de entorno DRIVE_MODEL_ID no está definida.")
 
-# --- Configuración extensiones ---
+app.config["MONGO_URI"] = MONGO_URI
+
+# --- Configuración de extensiones ---
 from app.extensions import login_manager, bcrypt, mongo
 from app.models import User as Usuario
 
-login_manager.init_app(app)
-login_manager.login_view = 'routes.index'
-
 mongo.init_app(app)
 bcrypt.init_app(app)
+login_manager.init_app(app)
+login_manager.login_view = 'routes.index'
 
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.get_by_id(user_id)
-
-# --- Conexión MongoDB directa con PyMongo (opcional si usas mongo de extensions) ---
-# Puedes omitir esto si solo usas mongo de app.extensions
-from pymongo import MongoClient  # type: ignore
-client = MongoClient(MONGO_URI)
-db = client["mi_basedatos"]
 
 # --- Descargar modelo si no existe ---
 model_path = "models/best50e1.pt"
@@ -56,9 +50,9 @@ device = 'cpu'  # Cambiar a 'cuda' si Render tiene GPU
 model = DetectMultiBackend(model_path, device=device, dnn=False)
 model.eval()
 
-# --- Registrar rutas de la app ---
+# --- Registrar rutas ---
 from app.routes import configure_routes
-configure_routes(app, model, db)
+configure_routes(app, model, mongo.db)  # Pasa mongo.db como conexión activa
 
 # --- Ruta simple de prueba ---
 @app.route("/ping")
