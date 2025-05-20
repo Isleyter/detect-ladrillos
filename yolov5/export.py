@@ -69,8 +69,8 @@ if platform.system() != "Windows":
 
 from models.experimental import attempt_load
 from models.yolo import ClassificationModel, Detect, DetectionModel, SegmentationModel
-from utils.dataloaders import LoadImages
-from utils.general import (
+from yolov5.utils.dataloaders import LoadImages
+from yolov5.utils.general import (
     LOGGER,
     Profile,
     check_dataset,
@@ -85,7 +85,7 @@ from utils.general import (
     url2file,
     yaml_save,
 )
-from utils.torch_utils import select_device, smart_inference_mode
+from yolov5.utils.torch_utils import select_device, smart_inference_mode
 
 MACOS = platform.system() == "Darwin"  # macOS environment
 
