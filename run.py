@@ -3,23 +3,17 @@ import os
 
 # Agrega el path del proyecto al PYTHONPATH
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-
-# Agrega el path al directorio actual y a la carpeta yolov5 antes de cualquier import relacionado
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'yolov5'))
 
-from utils.download_model import download_model  # type: ignore # IMPORTACIÓN CORRECTA
-from yolov5.models.common import DetectMultiBackend      # IMPORTACIÓN CORRECTA
-
+from utils.download_model import download_model  # type: ignore
+from yolov5.models.common import DetectMultiBackend  # type: ignore
 from flask import Flask  # type: ignore
 from pymongo import MongoClient  # type: ignore
 import torch
 from pathlib import Path
 
-
-
-app = Flask(__name__)
+# --- Crear instancia de la app Flask ---
+app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
 
 # --- Variables de entorno ---
 MONGO_URI = os.environ.get("MONGO_URI")
@@ -47,10 +41,15 @@ device = 'cpu'  # Cambiar a 'cuda' si Render tiene GPU
 model = DetectMultiBackend(model_path, device=device, dnn=False)
 model.eval()
 
+# --- Registrar rutas de la app ---
+from app.routes import configure_routes
+configure_routes(app, model, db)
+
 # --- Ruta simple de prueba ---
-@app.route("/")
+@app.route("/ping")
 def home():
     return "✅ App Flask corriendo con MongoDB y modelo YOLOv5 cargado localmente."
 
+# --- Ejecutar app ---
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
