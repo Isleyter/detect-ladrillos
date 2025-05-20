@@ -25,4 +25,6 @@ matplotlib
 flask-migrate
 pandas
 seaborn
+fpdf
+
 
