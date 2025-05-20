@@ -24,3 +24,5 @@ gdown
 matplotlib
 flask-migrate
 pandas
+seaborn
+
