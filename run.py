@@ -3,9 +3,9 @@ from pymongo import MongoClient  # type: ignore
 import torch
 import os
 from pathlib import Path
-import sys
 
-from utils.download_model import download_model  # type: ignore
+from yolov5.utils.download_model import download_model  # IMPORTACIÓN CORRECTA
+from yolov5.models.common import DetectMultiBackend      # IMPORTACIÓN CORRECTA
 
 app = Flask(__name__)
 
@@ -31,11 +31,7 @@ if not os.path.exists(model_path):
     download_model(DRIVE_MODEL_ID, model_path)
 
 # --- Cargar modelo YOLOv5 localmente ---
-sys.path.append('./yolov5')  # Asegúrate de que esta ruta sea válida en Render
-
-from models.common import DetectMultiBackend
-
-device = 'cpu'  # Cambiar a 'cuda' si tienes GPU en Render
+device = 'cpu'  # Cambiar a 'cuda' si Render tiene GPU
 model = DetectMultiBackend(model_path, device=device, dnn=False)
 model.eval()
 
