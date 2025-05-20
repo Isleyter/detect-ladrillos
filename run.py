@@ -1,10 +1,16 @@
+import sys
+import os
+
+# Agrega el path al directorio actual y a la carpeta yolov5 antes de cualquier import relacionado
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'yolov5'))
+
 from flask import Flask  # type: ignore
 from pymongo import MongoClient  # type: ignore
 import torch
-import os
 from pathlib import Path
 
-from yolov5.utils.download_model import download_model  # IMPORTACIÓN CORRECTA
+from yolov5.utils.download_model import download_model  # type: ignore # IMPORTACIÓN CORRECTA
 from yolov5.models.common import DetectMultiBackend      # IMPORTACIÓN CORRECTA
 
 app = Flask(__name__)
