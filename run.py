@@ -12,8 +12,19 @@ from pymongo import MongoClient  # type: ignore
 import torch
 from pathlib import Path
 
-# --- Crear instancia de la app Flask ---
+# --- Flask app ---
 app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
+
+# --- Configuración LoginManager ---
+from app.extensions import login_manager
+from app.models import Usuario
+
+login_manager.init_app(app)
+login_manager.login_view = 'routes.index'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.get_by_id(user_id)
 
 # --- Variables de entorno ---
 MONGO_URI = os.environ.get("MONGO_URI")
