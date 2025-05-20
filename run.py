@@ -8,23 +8,11 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'yolov5
 from utils.download_model import download_model  # type: ignore
 from yolov5.models.common import DetectMultiBackend  # type: ignore
 from flask import Flask  # type: ignore
-from pymongo import MongoClient  # type: ignore
 import torch
 from pathlib import Path
 
 # --- Flask app ---
 app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
-
-# --- Configuración LoginManager ---
-from app.extensions import login_manager
-from app.models import User as Usuario
-
-login_manager.init_app(app)
-login_manager.login_view = 'routes.index'
-
-@login_manager.user_loader
-def load_user(user_id):
-    return Usuario.get_by_id(user_id)
 
 # --- Variables de entorno ---
 MONGO_URI = os.environ.get("MONGO_URI")
@@ -36,7 +24,23 @@ if not MONGO_URI:
 if not DRIVE_MODEL_ID:
     raise EnvironmentError("❌ La variable de entorno DRIVE_MODEL_ID no está definida.")
 
-# --- Conexión MongoDB ---
+# --- Configuración extensiones ---
+from app.extensions import login_manager, bcrypt, mongo
+from app.models import User as Usuario
+
+login_manager.init_app(app)
+login_manager.login_view = 'routes.index'
+
+mongo.init_app(app)
+bcrypt.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.get_by_id(user_id)
+
+# --- Conexión MongoDB directa con PyMongo (opcional si usas mongo de extensions) ---
+# Puedes omitir esto si solo usas mongo de app.extensions
+from pymongo import MongoClient  # type: ignore
 client = MongoClient(MONGO_URI)
 db = client["mi_basedatos"]
 
