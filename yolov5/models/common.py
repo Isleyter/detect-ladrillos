@@ -38,7 +38,7 @@ from ultralytics.utils.plotting import Annotator, colors, save_one_box
 
 from yolov5.utils import TryExcept
 
-from ...utils.dataloaders import exif_transpose, letterbox
+from yolov5.utils.dataloaders import exif_transpose, letterbox
 
 from utils.general import (
     LOGGER,
