@@ -1,6 +1,10 @@
 import sys
 import os
 
+# Agrega el path del proyecto al PYTHONPATH
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+
 # Agrega el path al directorio actual y a la carpeta yolov5 antes de cualquier import relacionado
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'yolov5'))
