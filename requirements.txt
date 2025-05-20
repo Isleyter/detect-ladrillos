@@ -30,3 +30,5 @@ pillow==10.3.0
 # PyTorch (de preferencia especificar versión)
 torch==2.2.2  # o la versión que usaste localmente
 gdown
+flask-migrate
+
