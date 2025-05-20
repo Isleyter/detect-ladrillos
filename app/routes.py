@@ -312,3 +312,5 @@ def listar_camaras():
         return jsonify({'error': str(e)}), 500
 
 
+def configure_routes(app, model=None, db=None):
+    app.register_blueprint(routes)
