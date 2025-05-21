@@ -2,11 +2,9 @@ from flask import Flask
 from .extensions import mongo, login_manager, bcrypt
 import os
 from dotenv import load_dotenv
-from .auth import auth as auth_blueprint
-app.register_blueprint(auth_blueprint, url_prefix="/auth")
-
 
 def create_app():
+    # Crear instancia de Flask
     app = Flask(__name__)
 
     # --- Cargar variables de entorno ---
@@ -19,9 +17,11 @@ def create_app():
     login_manager.init_app(app)
     bcrypt.init_app(app)
 
-    # NO registrar aquí los blueprints si lo haces en configure_routes()
+    # Registrar blueprints
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
-    # Configurar usuario loader
+    # Configurar user_loader
     @login_manager.user_loader
     def load_user(user_id):
         from .models import User
