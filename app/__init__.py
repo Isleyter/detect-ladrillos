@@ -22,9 +22,9 @@ def create_app():
     bcrypt.init_app(app)
 
     # --- Registrar Blueprints ---
-    from .routes import routes as routes_blueprint
+    
     from .auth import auth as auth_blueprint
-    app.register_blueprint(routes_blueprint)
+    
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     # --- Cargar usuario ---
