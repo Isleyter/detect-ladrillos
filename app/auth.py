@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, login_required, logout_user
 from .extensions import bcrypt
 from app.models import User
@@ -12,7 +12,7 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        user = User.get_by_email(email)  # MongoDB lookup
+        user = User.get_by_email(email)
         if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('routes.panel'))
@@ -24,8 +24,6 @@ def login():
 # -------------------- REGISTRO --------------------
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
-    from app.extensions import mongo  # Import aquí para evitar errores circulares
-
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -42,6 +40,8 @@ def register():
 
         # Hashear la contraseña y guardar el usuario en MongoDB
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        mongo = current_app.extensions["pymongo"]
         mongo.db.users.insert_one({
             "email": email,
             "password": hashed_password
