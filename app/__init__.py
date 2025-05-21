@@ -6,9 +6,11 @@ from dotenv import load_dotenv
 def create_app():
     app = Flask(__name__)
 
+    # --- Cargar variables de entorno desde .env si estás localmente ---
+    load_dotenv()
+
     # --- Configuración de MongoDB ---
-    #app.config["MONGO_URI"] = "mongodb://localhost:27017/database"
-    app.config(os.getenv("MONGO_URI"))
+    app.config["MONGO_URI"] = os.getenv("MONGO_URI")  # ← ESTA ES LA CORRECTA
     app.config['SECRET_KEY'] = 'mysecret'
 
     # Inicializar extensiones
@@ -26,6 +28,6 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         from .models import User
-        return User.get_by_id(user_id)  # Ver paso 5
+        return User.get_by_id(user_id)
 
     return app
