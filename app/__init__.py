@@ -6,11 +6,9 @@ from dotenv import load_dotenv
 def create_app():
     app = Flask(__name__)
 
-    # --- Cargar variables de entorno desde .env si estás localmente ---
+    # --- Cargar variables de entorno ---
     load_dotenv()
-
-    # --- Configuración de MongoDB ---
-    app.config["MONGO_URI"] = os.getenv("MONGO_URI")  # ← ESTA ES LA CORRECTA
+    app.config["MONGO_URI"] = os.getenv("MONGO_URI")
     app.config['SECRET_KEY'] = 'mysecret'
 
     # Inicializar extensiones
@@ -18,13 +16,9 @@ def create_app():
     login_manager.init_app(app)
     bcrypt.init_app(app)
 
-    # Registrar Blueprints
-    from .routes import routes as routes_blueprint
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(routes_blueprint)
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    # NO registrar aquí los blueprints si lo haces en configure_routes()
 
-    # Cargar usuario
+    # Configurar usuario loader
     @login_manager.user_loader
     def load_user(user_id):
         from .models import User
