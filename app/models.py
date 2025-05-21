@@ -1,10 +1,15 @@
 from flask_login import UserMixin
-from app.extensions import mongo, bcrypt
+from flask import current_app
+from app.extensions import bcrypt
 from bson.objectid import ObjectId
+from datetime import datetime
 
-# Función para obtener la base de datos solo cuando mongo ya está inicializado
+# -------------------- GET DB DINÁMICO --------------------
 def get_db():
-    return mongo.db
+    mongo_ext = current_app.extensions.get("pymongo")
+    if not mongo_ext:
+        raise RuntimeError("❌ Mongo no está inicializado correctamente en Flask.")
+    return mongo_ext.db
 
 # -------------------- MODELO USUARIO --------------------
 class User(UserMixin):
@@ -44,11 +49,9 @@ class Monitoreo:
         filtro = filtro or {}
         saltar = (pagina - 1) * por_pagina
         resultados = get_db().monitoreos.find(filtro).sort("fecha", -1).skip(saltar).limit(por_pagina)
-
         resultados_list = list(resultados)
         for m in resultados_list:
-            m["_id"] = str(m["_id"])  # Para evitar errores de Jinja2 al renderizar
-
+            m["_id"] = str(m["_id"])
         return resultados_list
 
     @staticmethod
