@@ -1,11 +1,10 @@
 from flask import (
-    Flask, Blueprint, render_template, redirect, session,
-    url_for, Response, send_file, request, flash, jsonify
+    Blueprint, render_template, redirect, session,
+    url_for, Response, send_file, request, jsonify, current_app
 )
 from flask_login import current_user, login_required
 from datetime import datetime
 from bson.objectid import ObjectId
-from bson.son import SON
 from .extensions import mongo
 from app.camera import VideoCamera, generate_frames, listar_camaras_disponibles
 from app.utils import generar_pdf
@@ -14,7 +13,6 @@ import os
 
 routes = Blueprint('routes', __name__)
 video_camera = None  # Cámara global
-start_time = None
 
 
 # ===================== INDEX =====================
@@ -229,8 +227,3 @@ def listar_camaras():
         return jsonify(camaras)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-# ===================== CONFIGURACIÓN =====================
-def configure_routes(app, model=None, db=None):
-    app.register_blueprint(routes)
