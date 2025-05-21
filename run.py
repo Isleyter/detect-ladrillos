@@ -36,9 +36,10 @@ device = 'cpu'  # Cambiar a 'cuda' si Render tiene GPU
 model = DetectMultiBackend(model_path, device=device, dnn=False)
 model.eval()
 
-# --- Registrar rutas dinámicas ---
+# --- Registrar rutas dinámicas (dentro del contexto de la app) ---
 from app.routes import configure_routes
-configure_routes(app, model, mongo.db)
+with app.app_context():
+    configure_routes(app, model, mongo.db)
 
 # --- Ruta simple de prueba ---
 @app.route("/ping")
