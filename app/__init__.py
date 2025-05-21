@@ -2,6 +2,9 @@ from flask import Flask
 from .extensions import mongo, login_manager, bcrypt
 import os
 from dotenv import load_dotenv
+from .auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint, url_prefix="/auth")
+
 
 def create_app():
     app = Flask(__name__)
